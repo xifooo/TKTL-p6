@@ -1,15 +1,21 @@
 import { useDispatch } from "react-redux"
 import { createAnec } from "../reducers/anecdoteReducer"
+import { setNotification } from "../reducers/notificationReducer"
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
 
   const addAnec = e => {
-    e.preventDefault()
-
-    const content = e.target.anecdote.value
-    e.target.anecdote.value = ""
-    dispatch(createAnec(content))
+    try {
+      e.preventDefault()
+  
+      const content = e.target.anecdote.value
+      e.target.anecdote.value = ""
+      dispatch(createAnec(content))
+      dispatch(setNotification(`created one anecdote: ${content}`))
+    } catch (exception) {
+      dispatch(setNotification(`Some error occupying::: ${exception}`))
+    }
   }
 
   return(
