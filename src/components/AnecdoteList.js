@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import { castOneVote } from "../reducers/anecdoteReducer"
 import { setNotification } from "../reducers/notificationReducer"
+import anecdoteService from "../services/anecdoteService"
 
 
 const AnecdoteRow = ({ msg, handleClick }) => {
@@ -14,54 +15,36 @@ const AnecdoteRow = ({ msg, handleClick }) => {
   )
 }
 
+
 const AnecdoteList = () => {
   const dispatch = useDispatch()
+
   const searchText = useSelector(state => state.filter)
-  const anecdotes = useSelector(({filter, anecdote}) => {
+  const anecdotes = useSelector(({ filter, anecdote }) => {
     if (filter === "") {
       return anecdote
     }
     return filter === ""
       ? anecdote
-      : anecdote.filter(item => item.content.toUpperCase().indexOf(searchText.toUpperCase()) !== -1 )
+      : anecdote.filter(item => item.content.toUpperCase().indexOf(searchText.toUpperCase()) !== -1)
   })
+
   console.log("anecdotes:", anecdotes)
 
   const addVote = id => {
     try {
-      dispatch(castOneVote(id))
-      dispatch(setNotification(`cast one vote`))
+      const obj = anecdotes.find(item => item.id === id)
+      const changedObj = { ...obj, votes: obj.votes + 1 }
+      anecdoteService
+        .update(id, changedObj)
+        .then(returnedObj => {
+          dispatch(castOneVote(returnedObj))
+          dispatch(setNotification(`cast one vote`))
+        })
     } catch (exception) {
       dispatch(setNotification(`Some error occupying::: ${exception}`))
     }
   }
-
-  // function merge(L, R, lst, LL, RL, begin, end) {
-  //   if (begin < end) {
-  //     if ((RL <= 0) || (LL > 0 && L[LL - 1].votes > R[RL - 1].votes)) {
-  //       lst[end - 1] = L[LL - 1]
-  //       LL -= 1
-  //     } else {
-  //       lst[end - 1] = R[RL - 1]
-  //       RL -= 1
-  //     }
-  //     merge(L, R, lst, LL, RL, begin, end - 1)
-  //   }
-  // }
-  // function mergeSort(lst, begin = 0, end = undefined) {
-  //   if (end === undefined) { end = lst.length }
-  //   // condition
-  //   if (end - begin > 1) {
-  //     let divider = Math.floor((begin + end + 1) / 2)
-  //     mergeSort(lst, begin, divider)
-  //     mergeSort(lst, divider, end)
-  //     let L = lst.slice(begin, divider)
-  //     let R = lst.slice(divider, end)
-  //     merge(L, R, lst, L.length, R.length, begin, end)
-  //   }
-  // }
-
-  // mergeSort(anecdotes)
 
   return (
     <ul>

@@ -1,0 +1,39 @@
+GET http://localhost:3001/anecdotes HTTP/1.1
+User-Agent: REST-Client
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh
+
+### 
+
+GET http://localhost:3001/anecdotes/ HTTP/1.1
+
+### 
+
+POST http://localhost:3001/anecdotes HTTP/1.1
+content-type: application/json
+
+{
+    "content": "sample",
+    "votes": 0
+}
+
+### 
+
+PUT http://localhost:3001/anecdotes/47145 HTTP/1.1
+content-type: application/json
+
+{
+    "content": "If it hurts, do it more often",
+    "votes": 100
+}
+
+### 
+
+POST http://localhost:3001/anecdotes HTTP/1.1
+content-type: application/json
+
+{
+    "content": "sample",
+    "votes": 0
+}
