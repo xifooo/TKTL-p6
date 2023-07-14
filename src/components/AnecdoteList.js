@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
-import { castOneVote } from "../reducers/anecdoteReducer"
-import { setNotification } from "../reducers/notificationReducer"
-import anecdoteService from "../services/anecdoteService"
+import { giveOneVote } from "../reducers/anecdoteReducer"
+import { sentToNotification } from "../reducers/notificationReducer"
+
 
 
 const AnecdoteRow = ({ msg, handleClick }) => {
@@ -35,14 +35,11 @@ const AnecdoteList = () => {
     try {
       const obj = anecdotes.find(item => item.id === id)
       const changedObj = { ...obj, votes: obj.votes + 1 }
-      anecdoteService
-        .update(id, changedObj)
-        .then(returnedObj => {
-          dispatch(castOneVote(returnedObj))
-          dispatch(setNotification(`cast one vote`))
-        })
+      dispatch(giveOneVote(id, changedObj))
+      dispatch(sentToNotification(`you voted : ${obj.content}`, 5))
+
     } catch (exception) {
-      dispatch(setNotification(`Some error occupying::: ${exception}`))
+      dispatch(sentToNotification(`Some error occupying::: ${exception}`, 5))
     }
   }
 

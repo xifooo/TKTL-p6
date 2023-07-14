@@ -1,10 +1,10 @@
-import { useEffect } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { setNotification } from "../reducers/notificationReducer"
+// import { useEffect } from "react"
+import { useSelector } from "react-redux"
+// import { sentToNotification } from "../reducers/notificationReducer"
 
 const Notification = () => {
   const notification = useSelector(state => state.notification)
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
 
   const style = {
     border: 'solid',
@@ -12,13 +12,16 @@ const Notification = () => {
     borderWidth: 1
   }
 
-  useEffect(() => {
-    if (notification) {
-      setTimeout(() => {
-        dispatch(setNotification(null))
-      }, 5000)
-    }
-  })
+  // useEffect(() => {
+  //   if (notification) {
+  //     setTimeout(() => {
+  //       dispatch(setNotification(null))
+  //     }, 5000)
+  //   }
+  // })
+  // if (notification) {
+  //   dispatch(sentToNotification(`you voted '${anecdote.content}'`))
+  // }
 
   return (
     <div>
