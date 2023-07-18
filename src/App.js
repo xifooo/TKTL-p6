@@ -4,14 +4,17 @@ import { getAll, create, update } from "./requests"
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
+import { useNotificationDispatch } from "./NotificationContext"
+
+
 const App = () => {
   const queryClient = useQueryClient()
 
   const newAnecMutation = useMutation(create, {
     onSuccess: (newData) => {
-      const anecdotes = queryClient.getQueriesData("anecdotes")
-      queryClient.setQueryData("anecdotes", anecdotes.concat(newData))
-      // queryClient.invalidateQueries("anecdotes")
+      // const anecdotes = queryClient.getQueriesData("anecdotes")
+      // queryClient.setQueryData("anecdotes", anecdotes.concat(newData))
+      queryClient.invalidateQueries("anecdotes")
     }
   })
 
@@ -21,16 +24,22 @@ const App = () => {
     }
   })
 
+  const dispatch = useNotificationDispatch()
+
   const addAnecdote = content => {
-    if (content.length >= 5){
+    if (content.length >= 5) {
       const newObj = {
         content,
         votes: 0
       }
       newAnecMutation.mutate(newObj)
+      dispatch(`anecdote: ${newObj.content} created`)
+      // dispatch({type: "SEND", payload: `anecdote: ${newObj.content} created`})
     } else {
-      window.alert("new anecdote too short")
-      return
+      dispatch("new anecdote too short")
+      // dispatch({type: "SEND", payload: "new anecdote too short"})
+      // window.alert("new anecdote too short")
+      // return
     }
   }
 
@@ -40,6 +49,8 @@ const App = () => {
       votes: anecdote.votes + 1
     }
     updateAnecMutation.mutate(chanedObj)
+    // setNotification(chanedObj.content)
+    dispatch(`anecdote :${anecdote.content}. voted`)
   }
 
 
@@ -57,27 +68,28 @@ const App = () => {
   const anecdotes = result.data
 
   return (
-    <div>
-      <h3>Anecdote app</h3>
+      <div>
+        <h3>Anecdote app</h3>
 
-      <Notification />
+        <Notification />
+        <ul>
+          {anecdotes.map(anecdote =>
+            <li key={anecdote.id}>
+              <div>
+                {anecdote.content}
+              </div>
+              <div>
+                has {anecdote.votes}
+                <button onClick={() => handleVote(anecdote)}>vote</button>
+              </div>
+            </li>
+          )}
+        </ul>
 
-      {anecdotes.map(anecdote =>
-        <div key={anecdote.id}>
-          <div>
-            {anecdote.content}
-          </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote)}>vote</button>
-          </div>
-        </div>
-      )}
-
-      <AnecdoteForm
-        addAnecdote={addAnecdote}
-      />
-    </div>
+        <AnecdoteForm
+          addAnecdote={addAnecdote}
+        />
+      </div>
   )
 }
 
